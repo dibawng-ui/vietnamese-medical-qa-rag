@@ -1,0 +1,72 @@
+# Environment
+.env
+.venv
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Data
+data/raw/documents/*
+!data/raw/documents/.gitkeep
+data/processed/*.jsonl
+data/processed/*.json
+data/embeddings/
+*.csv
+*.xlsx
+
+# Models
+models/
+lora_checkpoints/
+finetuned_models/
+*.bin
+*.pt
+*.safetensors
+
+# Vector stores
+chroma_db/
+faiss_index/
+
+# Experiment results
+experiments/results/
+*.pkl
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

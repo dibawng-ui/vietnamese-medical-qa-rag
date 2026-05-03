@@ -1,0 +1,126 @@
+# Configuration for Vietnamese Medical Q&A System
+
+# Project settings
+project:
+  name: "Vietnamese Medical Q&A with RAG"
+  domain: "medical"
+  language: "vi"
+  description: "QA system for Vietnamese medical domain"
+
+# Data settings
+data:
+  raw_documents_path: "data/raw/documents/"
+  processed_data_path: "data/processed/"
+  embeddings_path: "data/embeddings/"
+  
+  # QA pairs files
+  qa_pairs_finetuning: "data/processed/qa_pairs_finetuning.jsonl"
+  qa_pairs_test: "data/processed/qa_pairs_test.jsonl"
+  
+  # Chunking settings
+  chunk_size: 512
+  chunk_overlap: 50
+  
+# Embedding settings
+embedding:
+  model: "sentence-transformers/sentence-vietnam/model"
+  model_name: "sentence-vietnam"
+  dimension: 384
+  batch_size: 32
+
+# Vector store settings
+vector_store:
+  type: "chroma"
+  persist_directory: "data/embeddings/chroma_db/"
+  collection_name: "medical_documents"
+  distance_metric: "cosine"
+
+# LLM settings
+llm:
+  model_name: "meta-llama/Llama-2-7b-hf"
+  device: "cuda"
+  device_map: "auto"
+  
+  # Generation settings
+  max_length: 512
+  temperature: 0.7
+  top_p: 0.95
+  top_k: 50
+  repetition_penalty: 1.2
+
+# Fine-tuning settings
+finetuning:
+  method: "lora"
+  learning_rate: 3e-4
+  num_epochs: 3
+  batch_size: 4
+  gradient_accumulation_steps: 2
+  
+  # LoRA config
+  lora_rank: 8
+  lora_alpha: 16
+  lora_dropout: 0.05
+  lora_target_modules: ["q_proj", "v_proj"]
+  
+  # QLoRA settings
+  quantization_bits: 4
+  double_quant: true
+  quant_type: "nf4"
+  
+  # Output
+  output_dir: "models/llama2-medical-lora/"
+  save_steps: 500
+  eval_steps: 500
+
+# RAG settings
+rag:
+  retriever_type: "dense"
+  top_k: 5
+  similarity_threshold: 0.5
+  
+  # Prompt template
+  system_prompt: |
+    Bạn là một trợ lý AI chuyên về y tế phổ thông tiếng Việt.
+    Hãy trả lời câu hỏi dựa trên các tài liệu được cung cấp.
+    Nếu thông tin không có trong tài liệu, hãy nói rõ điều đó.
+    Luôn đưa ra những lời khuyên an toàn và khuyến khích người hỏi tham khảo bác sĩ.
+  
+  user_prompt_template: |
+    Dựa trên các thông tin sau:
+    
+    {context}
+    
+    Hãy trả lời câu hỏi: {question}
+
+# Evaluation settings
+evaluation:
+  test_set_size: 50
+  metrics:
+    - "bleu"
+    - "rouge_l"
+    - "bertscore"
+    - "recall_at_5"
+  human_eval_samples: 50
+
+# Experiment settings
+experiments:
+  configs:
+    - name: "A - LLM gốc, Không RAG"
+      llm_type: "base"
+      use_rag: false
+    - name: "B - LLM gốc, Có RAG"
+      llm_type: "base"
+      use_rag: true
+    - name: "C - LLM Fine-tuned, Không RAG"
+      llm_type: "finetuned"
+      use_rag: false
+    - name: "D - LLM Fine-tuned, Có RAG"
+      llm_type: "finetuned"
+      use_rag: true
+
+# Colab settings
+colab:
+  use_free_tier: true
+  gpu_type: "T4"
+  enable_mixed_precision: true
+  gradient_checkpointing: true
